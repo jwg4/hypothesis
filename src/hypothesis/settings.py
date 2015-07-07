@@ -275,6 +275,17 @@ counter-example, falsification will terminate.
 """
 )
 
+
+Settings.define_setting(
+    'max_good_examples',
+    default=3,
+    description="""
+By default Hypothesis keeps looking for examples to try to simplify on the
+first it found. It will stop after it has found this many examples that
+satisfy the desired criterion (e.g. failing the test).
+"""
+)
+
 Settings.define_setting(
     'max_iterations',
     default=1000,

@@ -49,11 +49,11 @@ from hypothesis.internal.examplesource import ParameterSource
 from hypothesis.searchstrategy.strategies import strategy
 
 
-def time_to_call_it_a_day(settings, start_time):
+def time_to_call_it_a_day(timeout, start_time):
     """Have we exceeded our timeout?"""
-    if settings.timeout <= 0:
+    if timeout <= 0:
         return False
-    return time.time() >= start_time + settings.timeout
+    return time.time() >= start_time + timeout
 
 
 def find_satisfying_template(
@@ -94,7 +94,7 @@ def find_satisfying_template(
             if examples_considered >= max_iterations:
                 break
             examples_considered += 1
-            if time_to_call_it_a_day(settings, start_time):
+            if time_to_call_it_a_day(settings.timeout, start_time):
                 break
             tracker.track(example)
             try:
@@ -117,6 +117,12 @@ def find_satisfying_template(
     else:
         assert isinstance(search_strategy.template_upper_bound, int)
 
+    examples_found = 0
+    best_example = None
+    max_good_examples = max(
+        1, min(settings.max_good_examples, settings.max_shrinks)
+    )
+
     for parameter in parameter_source:  # pragma: no branch
         if len(tracker) >= search_strategy.template_upper_bound:
             break
@@ -124,7 +130,7 @@ def find_satisfying_template(
             break
         if satisfying_examples >= max_examples:
             break
-        if time_to_call_it_a_day(settings, start_time):
+        if time_to_call_it_a_day(settings.timeout, start_time):
             break
         examples_considered += 1
 
@@ -137,11 +143,23 @@ def find_satisfying_template(
             continue
         try:
             if condition(example):
-                return example
+                if examples_found:
+                    if search_strategy.strictly_simpler(example, best_example):
+                        best_example = example
+                else:
+                    best_example = example
+                examples_found += 1
+                if (
+                    examples_found >= max_good_examples or
+                    time_to_call_it_a_day(settings.timeout / 2, start_time)
+                ):
+                    return best_example
         except UnsatisfiedAssumption:
             parameter_source.mark_bad()
             continue
         satisfying_examples += 1
+    if examples_found > 0:
+        return best_example
     run_time = time.time() - start_time
     timed_out = settings.timeout >= 0 and run_time >= settings.timeout
     if (
@@ -218,7 +236,7 @@ def simplify_template_such_that(
                 if warmup < max_warmup:
                     simpler = islice(simpler, warmup)
                 for s in simpler:
-                    if time_to_call_it_a_day(settings, start_time):
+                    if time_to_call_it_a_day(settings.timeout, start_time):
                         return
                     if tracker.track(s) > 1:
                         continue
