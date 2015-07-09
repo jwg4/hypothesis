@@ -12,6 +12,7 @@ omit =
 
 [report]
 exclude_lines =
+    is_valid_value
     @abc.abstractmethod
     @abc.abstractproperty
     NotImplementedError
