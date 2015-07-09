@@ -33,7 +33,7 @@ import hypothesis.strategies as sd
 from hypothesis.extra import load_entry_points
 from hypothesis.errors import Flaky, Timeout, NoSuchExample, \
     Unsatisfiable, InvalidArgument, UnsatisfiedAssumption, \
-    DefinitelyNoSuchExample
+    YouFoundAHypothesisBug, DefinitelyNoSuchExample
 from hypothesis.control import assume  # noqa
 from hypothesis.settings import Settings, Verbosity
 from hypothesis.executors import executor
@@ -318,7 +318,13 @@ def reify_and_execute(
     print_example=False, always_print=False,
 ):
     def run():
-        args, kwargs = search_strategy.reify(template)
+        value = search_strategy.reify(template)
+        if not search_strategy.is_valid_value(template, value):
+            raise YouFoundAHypothesisBug(
+                'SearchStrategy %r produced invalid value %r' % (
+                    search_strategy, value
+                ))
+        args, kwargs = value
         if print_example:
             report(
                 lambda: 'Falsifying example: %s(%s)' % (
@@ -494,7 +500,7 @@ def given(*generator_arguments, **generator_kwargs):
                         always_print=settings.max_shrinks <= 0
                     ))
                     return False
-                except UnsatisfiedAssumption as e:
+                except (UnsatisfiedAssumption, YouFoundAHypothesisBug) as e:
                     raise e
                 except Exception as e:
                     if settings.max_shrinks <= 0:

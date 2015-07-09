@@ -531,6 +531,9 @@ class FixedBoundedFloatStrategy(FloatStrategy):
             right = self.upper_bound
         return left + random.random() * (right - left)
 
+    def is_valid_value(self, template, value):
+        return self.lower_bound <= value <= self.upper_bound
+
     def strictly_simpler(self, x, y):
         return x < y
 

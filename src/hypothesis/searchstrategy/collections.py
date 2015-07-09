@@ -76,6 +76,13 @@ class TupleStrategy(SearchStrategy):
             tuple_string, self.tuple_type.__name__
         )
 
+    def is_valid_value(self, template, value):
+        return (
+            len(value) == len(self.element_strategies) and
+            len(value) == len(template) and all(
+                s.is_valid_value(t, v) for s, t, v in zip(
+                    self.element_strategies, template, value)))
+
     def newtuple(self, xs):
         """Produce a new tuple of the correct type."""
         if self.tuple_type == tuple:

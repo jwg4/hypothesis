@@ -242,6 +242,18 @@ class SearchStrategy(object):
 
     # Methods to be overridden by subclasses
 
+    def is_valid_value(self, template, value):
+        """Hook for providing validation.
+
+        This is never used for correctness, it's only for internal
+        assertions to try to stop things going too badly wrong. Will
+        only be passed values that came out of this template, and checks
+        whether they should be values that could have come out of this
+        template.
+
+        """
+        return True
+
     def draw_parameter(self, random):
         """Produce a random valid parameter for this strategy, using only data
         from the provided random number generator."""
@@ -434,6 +446,10 @@ class OneOfStrategy(SearchStrategy):
         for e in self.element_strategies:
             self.template_upper_bound += e.template_upper_bound
         self.template_upper_bound = infinitish(self.template_upper_bound)
+
+    def is_valid_value(self, template, value):
+        return self.element_strategies[template[0]].is_valid_value(
+            template[1], value)
 
     def __repr__(self):
         return ' | '.join(map(repr, self.element_strategies))

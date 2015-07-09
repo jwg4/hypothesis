@@ -24,6 +24,16 @@ class HypothesisException(Exception):
     pass
 
 
+class YouFoundAHypothesisBug(HypothesisException):
+
+    """This exception is thrown when Hypothesis has done something that it
+    should never be able to do.
+
+    If you ever see it, please report it on the github issue tracker.
+
+    """
+
+
 class UnsatisfiedAssumption(HypothesisException):
 
     """An internal error raised by assume.

@@ -127,6 +127,12 @@ class StringStrategy(MappedSearchStrategy):
     def pack(self, ls):
         return ''.join(ls)
 
+    def is_valid_value(self, template, value):
+        lists = self.mapped_strategy
+        return (
+            lists.min_size <= len(value) <= lists.max_size
+        )
+
 
 class BinaryStringStrategy(MappedSearchStrategy):
 
@@ -140,3 +146,9 @@ class BinaryStringStrategy(MappedSearchStrategy):
         assert isinstance(x, list), repr(x)
         ba = bytearray(x)
         return binary_type(ba)
+
+    def is_valid_value(self, template, value):
+        lists = self.mapped_strategy
+        return (
+            lists.min_size <= len(value) <= lists.max_size
+        )
