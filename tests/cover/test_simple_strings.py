@@ -95,3 +95,13 @@ def test_does_not_simplify_into_surrogates():
     assert f == '\ue000'
     f = find(text(), lambda x: len([t for t in x if t >= '\udfff']) >= 10)
     assert f == '\ue000' * 10
+
+
+@given(binary(max_size=0))
+def test_is_empty_binary_string(t):
+    assert t == b''
+
+
+@given(text(max_size=0))
+def test_is_empty_text_string(t):
+    assert t == ''

@@ -53,7 +53,8 @@ BaseStrategies = [
             alphabet=alphabet, min_size=bounds[0], max_size=bounds[0]),
         st.text(min_size=1) | st.none(), size_bounds
     ),
-    size_bounds.map(lambda bounds: st.binary(*bounds)),
+    size_bounds.map(
+        lambda bounds: st.binary(min_size=bounds[0], max_size=bounds[1])),
 ]
 
 
