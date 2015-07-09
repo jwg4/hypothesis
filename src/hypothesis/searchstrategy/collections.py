@@ -472,6 +472,11 @@ class SingleElementListStrategy(MappedSearchStrategy):
             Random(0)
         )
 
+    def __repr__(self):
+        return 'SingleElementListStrategy(%r, %r)' % (
+            self.element_strategy, self.length_strategy,
+        )
+
     def is_valid_value(self, template, value):
         if not self.length_strategy.is_valid_value(template, len(value)):
             return False

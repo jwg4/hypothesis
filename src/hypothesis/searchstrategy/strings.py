@@ -36,6 +36,9 @@ class OneCharStringStrategy(SearchStrategy):
     )
     zero_point = ord('0')
 
+    def __repr__(self):
+        return 'OneCharStringStrategy()'
+
     def draw_parameter(self, random):
         alphabet_size = 1 + dist.geometric(random, 0.1)
         alphabet = []
@@ -122,7 +125,7 @@ class StringStrategy(MappedSearchStrategy):
         )
 
     def __repr__(self):
-        return 'StringStrategy()'
+        return 'StringStrategy(%r)' % (self.mapped_strategy,)
 
     def pack(self, ls):
         return ''.join(ls)
@@ -134,7 +137,7 @@ class BinaryStringStrategy(MappedSearchStrategy):
     lists of bytes."""
 
     def __repr__(self):
-        return 'BinaryStringStrategy()'
+        return 'BinaryStringStrategy(%r)' % (self.mapped_strategy,)
 
     def pack(self, x):
         assert isinstance(x, list), repr(x)
