@@ -193,6 +193,18 @@ class ListStrategy(SearchStrategy):
             self.max_size
         )
 
+    def is_valid_value(self, template, value):
+        if len(template) != len(value):
+            return False
+        if self.min_size and len(value) < self.min_size:
+            return False
+        if self.max_size and len(value) > self.max_size:
+            return False
+        return all(
+            self.element_strategy.is_valid_value(t, v)
+            for t, v in zip(template, value)
+        )
+
     def draw_parameter(self, random):
         if self.element_strategy is None:
             return None
@@ -458,6 +470,14 @@ class SingleElementListStrategy(MappedSearchStrategy):
         # once.
         self.base_template = element_strategy.draw_and_produce(
             Random(0)
+        )
+
+    def is_valid_value(self, template, value):
+        if not self.length_strategy.is_valid_value(template, len(value)):
+            return False
+        return all(
+            self.element_strategy.is_valid_value(self.base_template, v)
+            for v in value
         )
 
     def pack(self, length):

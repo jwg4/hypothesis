@@ -20,29 +20,40 @@ from __future__ import division, print_function, absolute_import, \
 import math
 
 import hypothesis.strategies as st
+from hypothesis import assume
+from hypothesis.errors import InvalidArgument
 from hypothesis.stateful import Bundle, RuleBasedStateMachine, rule
 from hypothesis.searchstrategy.strategies import BadData
 
 
-def order_bounds(bounds):
+def order_bounds(*bounds):
     if None in bounds:
         return bounds
     else:
         return sorted(bounds)
 
 good_floats = st.floats().filter(lambda x: not math.isnan(x))
+size_bound = st.integers(min_value=0) | st.none()
+size_bounds = st.builds(order_bounds, size_bound, size_bound)
+
 
 BaseStrategies = [
     st.builds(
-        lambda b1, b2: st.floats(*order_bounds((b1, b2))),
+        lambda b1, b2: st.floats(*order_bounds(b1, b2)),
         good_floats | st.none(),
         good_floats | st.none(),
     ),
     st.builds(
-        lambda b1, b2: st.integers(*order_bounds((b1, b2))),
+        lambda b1, b2: st.integers(*order_bounds(b1, b2)),
         st.integers() | st.none(),
         st.integers() | st.none(),
     ),
+    st.builds(
+        lambda alphabet, bounds: st.text(
+            alphabet=alphabet, min_size=bounds[0], max_size=bounds[0]),
+        st.text(min_size=1) | st.none(), size_bounds
+    ),
+    size_bounds.map(lambda bounds: st.binary(*bounds)),
 ]
 
 
@@ -60,6 +71,33 @@ class NearlyCompatibleStrategies(RuleBasedStateMachine):
     )
     def test_create_base_pair(self, source):
         return source
+
+    @rule(
+        strategies=slightly_incompatible_strategies,
+        bounds1=size_bounds,
+        bounds2=size_bounds,
+        coltype1=st.sampled_from((st.sets, st.lists, st.frozensets)),
+        coltype2=st.sampled_from((st.sets, st.lists, st.frozensets)),
+    )
+    def build_collections(
+        self, strategies, bounds1, bounds2, coltype1, coltype2
+    ):
+        strategy1, strategy2 = strategies
+        try:
+            return (
+                coltype1(strategy1, min_size=bounds1[0], max_size=bounds1[1]),
+                coltype2(strategy2, min_size=bounds2[0], max_size=bounds2[1])
+            )
+        except InvalidArgument:
+            assume(False)
+
+    @rule(
+        target=slightly_incompatible_strategies,
+        ss1=slightly_incompatible_strategies,
+        ss2=slightly_incompatible_strategies,
+    )
+    def or_strategies(self, ss1, ss2):
+        return (ss1[0] | ss2[0], ss1[1] | ss2[1])
 
     @rule(
         strategies=slightly_incompatible_strategies,

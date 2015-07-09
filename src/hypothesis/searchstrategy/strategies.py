@@ -21,7 +21,7 @@ from random import Random
 from collections import namedtuple
 
 from hypothesis.errors import BadData, NoExamples, WrongFormat, \
-    UnsatisfiedAssumption
+    UnsatisfiedAssumption, YouFoundAHypothesisBug
 from hypothesis.control import assume
 from hypothesis.settings import Settings
 from hypothesis.deprecation import note_deprecation
@@ -553,8 +553,13 @@ class MappedSearchStrategy(SearchStrategy):
         raise NotImplementedError(
             '%s.pack()' % (self.__class__.__name__))
 
-    def reify(self, value):
-        return self.pack(self.mapped_strategy.reify(value))
+    def reify(self, template):
+        value = self.mapped_strategy.reify(template)
+        if not self.mapped_strategy.is_valid_value(template, value):
+            raise YouFoundAHypothesisBug(
+                'Invalid intermediate results (%r, %r) from %r' % (
+                    template, value, self.mapped_strategy))
+        return self.pack(value)
 
     def simplifiers(self, random, template):
         return self.mapped_strategy.simplifiers(random, template)

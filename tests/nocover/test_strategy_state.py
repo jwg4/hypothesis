@@ -88,7 +88,8 @@ class HypothesisSpec(RuleBasedStateMachine):
     @rule(st=strats_with_templates)
     def reify(self, st):
         strat, temp = st
-        strat.reify(temp)
+        value = strat.reify(temp)
+        assert strat.is_valid_value(temp, value)
 
     @rule(target=strats_with_templates, st=strats_with_templates)
     def via_basic(self, st):
