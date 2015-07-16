@@ -20,6 +20,18 @@ from __future__ import division, print_function, absolute_import, \
 import math
 
 
+def poisson(random, lambd):
+    p = 1
+    L = math.exp(-lambd)
+    k = 0
+    while True:
+        p *= random.random()
+        if p > L:
+            k += 1
+        else:
+            return k
+
+
 def uniform_float(random, start, end):
     return start + random.random() * (end - start)
 

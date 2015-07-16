@@ -193,22 +193,22 @@ class ListStrategy(SearchStrategy):
                 self.element_strategy.draw_parameter(random)
                 for _ in hrange(1 + dist.geometric(random, 0.5))
             ]
-            n_templates = 1 + dist.geometric(
-                random, 1 / (1 + self.average_length))
+            average_length = random.expovariate(1.0 / self.average_length)
+            n_templates = 1 + dist.poisson(random, average_length)
             templates = [
                 self.element_strategy.draw_template(
                     random, random.choice(params))
                 for _ in hrange(n_templates)
             ]
             transitions = [[] for _ in hrange(n_templates)]
-            for tr in transitions:
+            for i, tr in enumerate(transitions):
                 for _ in hrange(1 + dist.geometric(random, 0.5)):
                     tr.append(random.randint(0, len(templates) - 1))
             return self.Parameter(
                 templates=templates,
                 transitions=transitions,
-                average_length=random.expovariate(
-                    1.0 / (1 + self.average_length)))
+                average_length=average_length,
+            )
 
     def draw_template(self, random, pv):
         if self.element_strategy is None:

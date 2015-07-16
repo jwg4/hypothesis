@@ -317,7 +317,7 @@ def distorted(x):
 
 
 test_sampled_from_large_number_can_mix = define_test(
-    lists(sampled_from(range(50))), 0.1, lambda x: len(set(x)) >= 25,
+    lists(sampled_from(range(50))), 0.05, lambda x: len(set(x)) >= 20,
     condition=lambda t: len(t) >= 50,
 )
 
