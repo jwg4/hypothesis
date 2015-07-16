@@ -323,7 +323,7 @@ test_sampled_from_large_number_can_mix = define_test(
 
 
 test_sampled_from_often_distorted = define_test(
-    lists(sampled_from(range(5))), 0.28, distorted_value,
+    lists(sampled_from(range(5))), 0.2, distorted_value,
     condition=lambda x: len(x) >= 3,
 )
 
