@@ -17,6 +17,8 @@
 from __future__ import division, print_function, absolute_import, \
     unicode_literals
 
+from random import Random
+
 import hypothesis.strategies as s
 from hypothesis import find, given
 from hypothesis.searchstrategy.morphers import Morpher, MorpherStrategy
@@ -146,6 +148,14 @@ def test_a_morpher_accumulates_strategies():
     m.collapse()
     m.collapse()
     assert len(m.data) == 2
+
+
+def test_morphers_with_no_strategies_can_be_simpler():
+    rnd = Random(1)
+    m1 = morphers.draw_and_produce(rnd)
+    m2 = morphers.draw_and_produce(rnd)
+    assert morphers.strictly_simpler(m1, m2) or morphers.strictly_simpler(
+        m2, m1)
 
 
 @given(
