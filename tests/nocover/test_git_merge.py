@@ -138,3 +138,4 @@ class DatabaseMergingState(GenericStateMachine):
 
 
 TestMerging = DatabaseMergingState.TestCase
+TestMerging.settings.timeout = 60
