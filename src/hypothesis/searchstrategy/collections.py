@@ -18,6 +18,7 @@ from __future__ import division, print_function, absolute_import, \
     unicode_literals
 
 import math
+import itertools
 from copy import deepcopy
 from random import Random
 from collections import namedtuple
@@ -189,21 +190,21 @@ class ListStrategy(SearchStrategy):
         if self.element_strategy is None:
             return None
         else:
-            params = [
-                self.element_strategy.draw_parameter(random)
-                for _ in hrange(1 + dist.geometric(random, 0.5))
-            ]
+            param = self.element_strategy.draw_parameter(random)
             average_length = random.expovariate(1.0 / self.average_length)
-            n_templates = 1 + dist.poisson(random, average_length)
-            templates = [
-                self.element_strategy.draw_template(
-                    random, random.choice(params))
-                for _ in hrange(n_templates)
-            ]
-            transitions = [[] for _ in hrange(n_templates)]
-            for i, tr in enumerate(transitions):
-                for _ in hrange(1 + dist.geometric(random, 0.5)):
-                    tr.append(random.randint(0, len(templates) - 1))
+
+            templates_random = Random(random.getrandbits(64))
+            templates = Stream(
+                self.element_strategy.draw_template(templates_random, param)
+                for _ in itertools.repeat(())
+            )
+
+            transitions_random = Random(random.getrandbits(64))
+            transitions = Stream([
+                dist.poisson(transitions_random, i)
+                for _ in hrange(2)]
+                for i in itertools.count(1))
+
             return self.Parameter(
                 templates=templates,
                 transitions=transitions,
