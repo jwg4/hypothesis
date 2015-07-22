@@ -194,6 +194,12 @@ class MorpherStrategy(SearchStrategy):
         by_y = direction_for(ystrat)
         return max(by_x, by_y) <= 0 and min(by_x, by_y) < 0
 
+    def enumerate(self):
+        yield Morpher(0, 0)
+        yield Morpher(1, 0)
+        yield Morpher(0, 1)
+        yield Morpher(1, 1)
+
     def draw_template(self, random, parameter):
         return Morpher(
             parameter_seed=parameter,

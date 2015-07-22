@@ -106,16 +106,36 @@ def find_satisfying_template(
             if satisfying_examples >= max_examples:
                 break
 
-    parameter_source = ParameterSource(
-        random=random, strategy=search_strategy,
-        max_tries=max_parameter_tries,
-    )
-
     assert search_strategy.template_upper_bound >= 0
     if isinstance(search_strategy.template_upper_bound, float):
         assert math.isinf(search_strategy.template_upper_bound)
     else:
         assert isinstance(search_strategy.template_upper_bound, int)
+
+    for example in islice(search_strategy.enumerate(), max_examples // 2):
+        if len(tracker) >= search_strategy.template_upper_bound:
+            break
+        if (
+            settings.timeout > 0 and
+            time.time() >= start_time + settings.timeout / 3
+        ):
+            break
+        examples_considered += 1
+        if tracker.track(example) > 1:
+            debug_report('Skipping duplicate example')
+            continue
+        try:
+            if condition(example):
+                return example
+        except UnsatisfiedAssumption:
+            continue
+        satisfying_examples += 1
+
+    debug_report('Enumeration failed to find anything. Trying random')
+    parameter_source = ParameterSource(
+        random=random, strategy=search_strategy,
+        max_tries=max_parameter_tries,
+    )
 
     for parameter in parameter_source:  # pragma: no branch
         if len(tracker) >= search_strategy.template_upper_bound:

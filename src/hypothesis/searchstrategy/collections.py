@@ -29,6 +29,7 @@ from hypothesis.settings import Settings
 from hypothesis.utils.show import show
 from hypothesis.utils.size import clamp
 from hypothesis.internal.compat import OrderedDict, hrange, integer_types
+from hypothesis.internal.iteration import product, drawn_from
 from hypothesis.searchstrategy.strategies import EFFECTIVELY_INFINITE, \
     BadData, SearchStrategy, MappedSearchStrategy, check_type, \
     check_length, check_data_type, one_of_strategies
@@ -81,6 +82,11 @@ class TupleStrategy(SearchStrategy):
             return tuple(xs)
         else:
             return self.tuple_type(*xs)
+
+    def enumerate(self):
+        return product(
+            e.enumerate() for e in self.element_strategies
+        )
 
     def draw_parameter(self, random):
         return tuple([
@@ -184,6 +190,15 @@ class ListStrategy(SearchStrategy):
             self.element_strategy, self.min_size, self.average_length,
             self.max_size
         )
+
+    def enumerate(self):
+        if self.element_strategy is None:
+            return iter(((),))
+        for value in drawn_from(
+            self.element_strategy.enumerate(),
+            min_size=self.min_size, max_size=self.max_size
+        ):
+            yield tuple(map(deepcopy, value))
 
     def draw_parameter(self, random):
         if self.element_strategy is None:

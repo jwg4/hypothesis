@@ -20,6 +20,7 @@ from __future__ import division, print_function, absolute_import, \
 import sys
 import math
 import struct
+from itertools import count
 from collections import namedtuple
 
 import hypothesis.internal.distributions as dist
@@ -117,6 +118,10 @@ class IntegersFromStrategy(SearchStrategy):
     def __repr__(self):
         return 'IntegersFromStrategy(%d)' % (self.lower_bound,)
 
+    def enumerate(self):
+        for i in count():  # pragma: no branch
+            yield i
+
     def draw_parameter(self, random):
         return clamp(
             0.0,
@@ -194,6 +199,12 @@ class RandomGeometricIntStrategy(IntStrategy):
     def __repr__(self):
         return 'RandomGeometricIntStrategy()'
 
+    def enumerate(self):
+        yield 0
+        for i in count(1):  # pragma: no branch
+            yield i
+            yield -i
+
     def draw_parameter(self, random):
         return self.Parameter(
             negative_probability=random.betavariate(0.5, 0.5),
@@ -240,6 +251,9 @@ class BoundedIntStrategy(SearchStrategy):
         if start > end:
             raise ValueError('Invalid range [%d, %d]' % (start, end))
         self.template_upper_bound = infinitish(end - start + 1)
+
+    def enumerate(self):
+        return iter(hrange(self.start, self.end + 1))
 
     def __repr__(self):
         return 'BoundedIntStrategy(%d, %d)' % (self.start, self.end)
@@ -305,6 +319,13 @@ class FloatStrategy(SearchStrategy):
 
     def __repr__(self):
         return '%s()' % (self.__class__.__name__,)
+
+    def enumerate(self):
+        yield 0.0
+        yield 1.0
+        yield 0.5
+        yield -1.0
+        yield -0.5
 
     def strictly_simpler(self, x, y):
         if math.isnan(x):
@@ -530,6 +551,10 @@ class FixedBoundedFloatStrategy(FloatStrategy):
             self.lower_bound, self.upper_bound,
         )
 
+    def enumerate(self):
+        yield self.lower_bound
+        yield self.upper_bound
+
     def draw_parameter(self, random):
         return self.Parameter(
             cut=random.random(),
@@ -649,6 +674,11 @@ class FloatsFromBase(FloatStrategy):
         super(FloatsFromBase, self).__init__()
         self.base = base
         self.sign = sign
+
+    def enumerate(self):
+        yield self.base
+        yield self.base + self.sign * sys.float_info.min
+        yield self.base + self.sign
 
     def draw_parameter(self, random):
         return random.gammavariate(2, 50)

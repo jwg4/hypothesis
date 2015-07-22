@@ -38,6 +38,9 @@ class ReprWrapperStrategy(SearchStrategy):
     def __repr__(self):
         return self.representation
 
+    def enumerate(self):
+        return self.wrapped_strategy.enumerate()
+
     def draw_parameter(self, random):
         return self.wrapped_strategy.draw_parameter(random)
 

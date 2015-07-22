@@ -50,6 +50,10 @@ class BoolStrategy(SearchStrategy):
     def draw_template(self, random, p):
         return dist.biased_coin(random, p)
 
+    def enumerate(self):
+        yield False
+        yield True
+
     def to_basic(self, value):
         check_type(bool, value)
         return int(value)
@@ -72,6 +76,9 @@ class JustStrategy(SearchStrategy):
 
     def __repr__(self):
         return 'JustStrategy(value=%r)' % (self.value,)
+
+    def enumerate(self):
+        yield None
 
     def draw_parameter(self, random):
         return None
@@ -137,6 +144,10 @@ class SampledFromStrategy(SearchStrategy):
 
     def basic_simplify(self, random, template):
         for i in hrange(0, template):
+            yield i
+
+    def enumerate(self):
+        for i in hrange(len(self.elements)):
             yield i
 
     def strictly_simpler(self, x, y):

@@ -28,6 +28,7 @@ from hypothesis.deprecation import note_deprecation
 from hypothesis.internal.compat import hrange, integer_types
 from hypothesis.utils.extmethod import ExtMethod
 from hypothesis.internal.chooser import chooser
+from hypothesis.internal.iteration import interleave
 from hypothesis.internal.reflection import get_pretty_function_description
 
 
@@ -243,6 +244,9 @@ class SearchStrategy(object):
 
     # Methods to be overridden by subclasses
 
+    def enumerate(self):
+        return iter(())
+
     def draw_parameter(self, random):
         """Produce a random valid parameter for this strategy, using only data
         from the provided random number generator."""
@@ -439,6 +443,13 @@ class OneOfStrategy(SearchStrategy):
     def __repr__(self):
         return ' | '.join(map(repr, self.element_strategies))
 
+    def enumerate(self):
+        def child_enumerate(i):
+            for t in self.element_strategies[i].enumerate():
+                yield i, t
+        return interleave(
+            map(child_enumerate, range(len(self.element_strategies))))
+
     def strictly_simpler(self, x, y):
         lx, vx = x
         ly, vy = y
@@ -555,6 +566,9 @@ class MappedSearchStrategy(SearchStrategy):
 
     def draw_template(self, random, pv):
         return self.mapped_strategy.draw_template(random, pv)
+
+    def enumerate(self):
+        return self.mapped_strategy.enumerate()
 
     def pack(self, x):
         """Take a value produced by the underlying mapped_strategy and turn it

@@ -248,6 +248,14 @@ def test_bounds_are_respected():
     assert find(floats(max_value=-1.0), lambda x: True) == -1.0
 
 
+def test_around_zero():
+    xs = find(
+        lists(floats()),
+        lambda x: any(t >= 10 ** 6 for t in x) and any(t <= 0 for t in x))
+    xs.sort()
+    assert xs == [0.0, float(10 ** 6)]
+
+
 class TestFloatsAreFloats(object):
 
     @given(floats())

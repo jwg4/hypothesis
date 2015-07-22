@@ -100,6 +100,13 @@ def test_morphers_are_judged_on_following_strategies():
     assert morphers.strictly_simpler(m1, m2)
 
 
+def test_can_clone_untouched_morphers():
+    _, some_morphers = find(s.tuples(
+        s.integers(), s.lists(morphers)),
+        lambda x: len(x[1]) >= 10 and x[0] >= 10 ** 6)
+    assert len(set(m.become(s.integers()) for m in some_morphers)) == 1
+
+
 def test_thorough_cloning():
     def check(x):
         ids = list(map(id, x))

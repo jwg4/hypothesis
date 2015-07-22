@@ -26,7 +26,7 @@ from itertools import islice
 from collections import namedtuple
 
 from hypothesis import given, assume
-from hypothesis.errors import BadData, Unsatisfiable
+from hypothesis.errors import BadData, Unsatisfiable, UnsatisfiedAssumption
 from hypothesis.database import ExampleDatabase
 from hypothesis.settings import Settings
 from hypothesis.strategies import lists, randoms, integers
@@ -44,6 +44,9 @@ class TemplatesStrategy(SearchStrategy):
         super(TemplatesStrategy, self).__init__()
         self.base_strategy = base_strategy
         self.template_upper_bound = base_strategy.template_upper_bound
+
+    def enumerate(self):
+        return self.base_strategy.enumerate()
 
     def draw_parameter(self, random):
         return self.base_strategy.draw_parameter(random)
@@ -345,5 +348,12 @@ def strategy_test_suite(
         def test_can_create_templates(self, random):
             parameter = strat.draw_parameter(random)
             strat.draw_template(random, parameter)
+
+        def test_enumerated_values_are_reifiable(self):
+            for v in islice(strat.enumerate(), 100):
+                try:
+                    strat.reify(v)
+                except UnsatisfiedAssumption:
+                    continue
 
     return ValidationSuite
