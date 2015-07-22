@@ -193,7 +193,7 @@ class ListStrategy(SearchStrategy):
 
     def enumerate(self):
         if self.element_strategy is None:
-            return iter(((),))
+            return
         for value in drawn_from(
             self.element_strategy.enumerate(),
             min_size=self.min_size, max_size=self.max_size
