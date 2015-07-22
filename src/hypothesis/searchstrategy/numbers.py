@@ -322,10 +322,15 @@ class FloatStrategy(SearchStrategy):
 
     def enumerate(self):
         yield 0.0
+        yield sys.float_info.min
         yield 1.0
         yield 0.5
+        yield float('inf')
         yield -1.0
+        yield -sys.float_info.min
         yield -0.5
+        yield float('-inf')
+        yield float('nan')
 
     def strictly_simpler(self, x, y):
         if math.isnan(x):
