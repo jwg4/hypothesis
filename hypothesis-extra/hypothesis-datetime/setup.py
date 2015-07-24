@@ -50,7 +50,7 @@ setup(
     url='https://github.com/DRMacIver/hypothesis',
     license='MPL v2',
     description='Adds support for generating datetime to Hypothesis',
-    install_requires=["hypothesis[datetime]"]
+    install_requires=["hypothesis[datetime]"],
     long_description=open(README).read(),
     entry_points={
         'hypothesis.extra': 'hypothesisdatetime = hypothesisdatetime'
