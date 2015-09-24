@@ -17,11 +17,12 @@
 from __future__ import division, print_function, absolute_import
 
 import pytest
+from hypothesis import strategy
 from hypothesis.strategies import just, sets, text, lists, binary, \
     floats, one_of, tuples, randoms, booleans, integers, frozensets, \
     sampled_from, complex_numbers, fixed_dictionaries
 from hypothesis.searchstrategy.narytree import n_ary_tree
-from hypothesis.searchstrategy.strategies import BadData, strategy
+from hypothesis.searchstrategy.strategies import BadData
 
 
 @pytest.mark.parametrize((u'specifier', u'data'), [
