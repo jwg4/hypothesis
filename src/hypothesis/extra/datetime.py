@@ -24,8 +24,9 @@ import hypothesis.internal.distributions as dist
 from hypothesis.errors import InvalidArgument
 from hypothesis.strategies import defines_strategy
 from hypothesis.internal.compat import hrange, text_type
-from hypothesis.searchstrategy.strategies import BadData, strategy, \
-    check_length, SearchStrategy, check_data_type
+from hypothesis.internal.strategymethod import strategy
+from hypothesis.searchstrategy.strategies import BadData, check_length, \
+    SearchStrategy, check_data_type
 
 DatetimeSpec = namedtuple(u'DatetimeSpec', (u'naive_options',))
 
