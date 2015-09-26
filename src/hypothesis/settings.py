@@ -414,3 +414,9 @@ Settings.define_setting(
     default=DEFAULT_VERBOSITY,
     description=u'Control the verbosity level of Hypothesis messages',
 )
+
+Settings.define_setting(
+    u'average_list_length',
+    default=25.0,
+    description=u'Average length of lists to use'
+)
