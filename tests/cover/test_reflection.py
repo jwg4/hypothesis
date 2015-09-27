@@ -637,3 +637,7 @@ def hi():
 def test_can_extract_lambda_source_in_series_of_decorators():
     assert get_pretty_function_description(arguments_seen[0]) == 'lambda x: 2'
     assert get_pretty_function_description(arguments_seen[1]) == 'lambda x: 1'
+
+
+def test_can_extract_source_of_lambda_with_no_args():
+    assert get_pretty_function_description(lambda: 1) == 'lambda: 1'

@@ -227,9 +227,12 @@ def extract_lambda_source(f):
     source = LINE_CONTINUATION.sub(u' ', source)
     source = WHITESPACE.sub(u' ', source)
     source = source.strip()
-    lambda_source = re.compile('lambda %s *:' % (', '.join(arg_strings)))
+    if args:
+        lambda_source = re.compile('lambda %s *:' % (', '.join(arg_strings)))
+    else:
+        lambda_source = re.compile('lambda *:')
     search = lambda_source.search(source)
-    assert search
+    assert search is not None
     source = source[search.span()[0]:]
     try:
         tree = ast.parse(source)

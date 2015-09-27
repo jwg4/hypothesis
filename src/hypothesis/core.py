@@ -640,7 +640,8 @@ def find(specifier, condition, settings=None, random=None, storage=None):
                 ))
         return success
 
-    template_condition.__name__ = condition.__name__
+    if condition.__name__ != '<lambda>':
+        template_condition.__name__ = condition.__name__
     tracker = Tracker()
 
     try:
