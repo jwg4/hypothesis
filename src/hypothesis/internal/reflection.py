@@ -239,8 +239,6 @@ def extract_lambda_source(f):
     except SyntaxError:
         for i in hrange(len(source) - 1, len(u'lambda'), -1):
             prefix = source[:i]
-            if u'lambda' not in prefix:
-                return if_confused
             try:
                 tree = ast.parse(prefix)
                 source = prefix

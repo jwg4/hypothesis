@@ -20,8 +20,6 @@ env:
     matrix:
         - TOXENV=docs
         - TOXENV=coverage
-        - TOXENV=django17
-        - TOXENV=django18
         - TOXENV=lint
         - TOXENV=examples2
         - TOXENV=examples3
@@ -36,7 +34,8 @@ env:
         - TOXENV=pytest26
         - TOXENV=fakefactory052
         - TOXENV=fakefactory053
-        - TOXENV=pytest26
+        - TOXENV=django17
+        - TOXENV=django18
 
 install:
     - ./scripts/install.sh
