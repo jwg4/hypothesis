@@ -227,14 +227,18 @@ def extract_lambda_source(f):
     source = LINE_CONTINUATION.sub(u' ', source)
     source = WHITESPACE.sub(u' ', source)
     source = source.strip()
-
+    if args:
+        lambda_source = re.compile('lambda %s *:' % (', '.join(arg_strings)))
+    else:
+        lambda_source = re.compile('lambda *:')
+    search = lambda_source.search(source)
+    assert search is not None
+    source = source[search.span()[0]:]
     try:
         tree = ast.parse(source)
     except SyntaxError:
         for i in hrange(len(source) - 1, len(u'lambda'), -1):
             prefix = source[:i]
-            if u'lambda' not in prefix:
-                return if_confused
             try:
                 tree = ast.parse(prefix)
                 source = prefix
@@ -243,7 +247,6 @@ def extract_lambda_source(f):
                 continue
         else:
             return if_confused
-
     all_lambdas = extract_all_lambdas(tree)
     aligned_lambdas = [
         l for l in all_lambdas
