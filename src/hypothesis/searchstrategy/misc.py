@@ -24,6 +24,7 @@ from hypothesis.searchstrategy.strategies import BadData, check_type, \
 
 
 class BoolStrategy(SearchStrategy):
+    templates_are_immutable = True
 
     """A strategy that produces Booleans with a Bernoulli conditional
     distribution."""
@@ -58,6 +59,7 @@ class BoolStrategy(SearchStrategy):
 
 
 class JustStrategy(SearchStrategy):
+    templates_are_immutable = True
 
     """
     A strategy which simply returns a single fixed value with probability 1.
@@ -107,6 +109,7 @@ class RandomStrategy(MappedSearchStrategy):
 
 
 class SampledFromStrategy(SearchStrategy):
+    templates_are_immutable = True
 
     """A strategy which samples from a set of elements. This is essentially
     equivalent to using a OneOfStrategy over Just strategies but may be more

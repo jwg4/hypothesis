@@ -168,6 +168,7 @@ class BasicSearchStrategy(SearchStrategy):
     # simplification at an arbitrary level so as to not get caught in an
     # infinite loop.
     MAX_DEPTH = 1000
+    templates_are_immutable = True
 
     def __init__(
         self,

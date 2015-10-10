@@ -45,6 +45,7 @@ class TemplatesStrategy(SearchStrategy):
         super(TemplatesStrategy, self).__init__()
         self.base_strategy = base_strategy
         self.template_upper_bound = base_strategy.template_upper_bound
+        self.templates_are_immutable = base_strategy.templates_are_immutable
 
     def __repr__(self):
         return u'templates_for(%r)' % (self.base_strategy,)

@@ -16,6 +16,7 @@
 
 from __future__ import division, print_function, absolute_import
 
+from copy import deepcopy
 from random import Random
 from collections import namedtuple
 
@@ -156,6 +157,8 @@ class SearchStrategy(object):
     providing a generator over some examples of similar but simpler templates.
 
     """
+
+    templates_are_immutable = False
 
     def example(self, random=None):
         """Provide an example of the sort of value that this strategy
@@ -376,6 +379,13 @@ class SearchStrategy(object):
         """
         return iter(())
 
+    def copy_template(self, template):
+        """If template is mutable, copy it, otherwise simply return it."""
+        if self.templates_are_immutable:
+            return template
+        else:
+            return deepcopy(template)
+
 
 class LazyParameter(object):
 
@@ -424,6 +434,9 @@ class OneOfStrategy(SearchStrategy):
         for e in self.element_strategies:
             self.template_upper_bound += e.template_upper_bound
         self.template_upper_bound = infinitish(self.template_upper_bound)
+        self.templates_are_immutable = all(
+            s.templates_are_immutable for s in strategies
+        )
 
     def __repr__(self):
         return u' | '.join(map(repr, self.element_strategies))
@@ -533,6 +546,7 @@ class MappedSearchStrategy(SearchStrategy):
         SearchStrategy.__init__(self)
         self.mapped_strategy = strategy
         self.template_upper_bound = self.mapped_strategy.template_upper_bound
+        self.templates_are_immutable = strategy.templates_are_immutable
         if pack is not None:
             self.pack = pack
 

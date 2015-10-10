@@ -32,6 +32,7 @@ class WrapperStrategy(SearchStrategy):
         SearchStrategy.__init__(self)
         self.wrapped_strategy = strategy
         self.template_upper_bound = self.wrapped_strategy.template_upper_bound
+        self.templates_are_immutable = strategy.templates_are_immutable
 
     def __repr__(self):
         return u'%s(%r)' % (type(self).__name__, self.wrapped_strategy)

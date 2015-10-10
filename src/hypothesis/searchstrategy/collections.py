@@ -59,6 +59,9 @@ class TupleStrategy(SearchStrategy):
         for e in self.element_strategies:
             self.template_upper_bound = safe_mul(
                 e.template_upper_bound, self.template_upper_bound)
+        self.templates_are_immutable = all(
+            s.templates_are_immutable for s in strategies
+        )
 
     def reify(self, value):
         return self.newtuple([
@@ -169,6 +172,11 @@ class ListStrategy(SearchStrategy):
         else:
             self.element_strategy = None
             self.template_upper_bound = 1
+        if self.element_strategy is not None:
+            self.templates_are_immutable = (
+                self.element_strategy.templates_are_immutable)
+        else:
+            self.templates_are_immutable = True
 
     def reify(self, value):
         if self.element_strategy is not None:
@@ -328,9 +336,9 @@ class ListStrategy(SearchStrategy):
             # It's unlikely this is actually of much benefit in practical cases
             # but it makes the tests pass. Sorry.
             for j in indices[:-1]:
-                result[j] = deepcopy(pivot)
+                result[j] = self.element_strategy.copy_template(pivot)
             yield tuple(result)
-            result[indices[-1]] = deepcopy(pivot)
+            result[indices[-1]] = self.element_strategy.copy_template(pivot)
             yield tuple(result)
             for i in indices[:-2]:
                 result[i] = x[i]
@@ -396,7 +404,7 @@ class ListStrategy(SearchStrategy):
                 for simpler in simplify(random, value):
                     copy = list(x)
                     for i in indices:
-                        copy[i] = deepcopy(simpler)
+                        copy[i] = self.element_strategy.copy_template(simpler)
                     yield tuple(copy)
         accept.__name__ = str(
             u'shared_simplification(%s)' % (simplify.__name__,)

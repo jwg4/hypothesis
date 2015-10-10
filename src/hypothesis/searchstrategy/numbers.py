@@ -38,6 +38,7 @@ def integer_or_bad(data):
 
 
 class IntStrategy(SearchStrategy):
+    templates_are_immutable = True
 
     """A generic strategy for integer types that provides the basic methods
     other than produce.
@@ -107,6 +108,7 @@ class IntStrategy(SearchStrategy):
 
 
 class IntegersFromStrategy(SearchStrategy):
+    templates_are_immutable = True
 
     def __init__(self, lower_bound, average_size=1000.0):
         super(IntegersFromStrategy, self).__init__()
@@ -228,6 +230,7 @@ class WideRangeIntStrategy(IntStrategy):
 
 
 class BoundedIntStrategy(SearchStrategy):
+    templates_are_immutable = True
 
     """A strategy for providing integers in some interval with inclusive
     endpoints."""
@@ -295,6 +298,7 @@ def is_integral(value):
 
 
 class FloatStrategy(SearchStrategy):
+    templates_are_immutable = True
 
     """Generic superclass for strategies which produce floats."""
 
