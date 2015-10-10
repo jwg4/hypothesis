@@ -119,9 +119,6 @@ class BasicTemplate(object):
     def __init__(self, tracking_id):
         self.tracking_id = tracking_id
 
-    def __trackas__(self):
-        return (type(self).__name__, self.tracking_id)
-
     def __eq__(self, other):
         return (
             type(self) == type(other) and

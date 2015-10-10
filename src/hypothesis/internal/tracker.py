@@ -23,35 +23,7 @@ import marshal
 from hypothesis.internal.compat import text_type, binary_type
 
 
-def flatten(o):
-    result = []
-    stack = [o]
-
-    while stack:
-        t = stack.pop()
-        if (not isinstance(t, type)) and hasattr(t, u'__trackas__'):
-            t = t.__trackas__()
-        if isinstance(t, type):
-            t = (u'type', getattr(t, u'__qualname__', t.__name__))
-        if isinstance(t, (text_type, binary_type)):
-            result.append(t)
-        elif isinstance(t, collections.Mapping):
-            result.append(type(t).__name__)
-            result.append(len(t))
-            stack.extend(list(t.items()))
-        elif isinstance(t, collections.Iterable):
-            result.append(type(t).__name__)
-            x = list(t)
-            result.append(len(x))
-            stack.extend(x)
-        else:
-            result.append(t)
-    return result
-
-
 def object_to_tracking_key(o):
-    o = flatten(o)
-
     try:
         k = marshal.dumps(o)
     except ValueError:
@@ -65,14 +37,15 @@ def object_to_tracking_key(o):
 
 class Tracker(object):
 
-    def __init__(self):
+    def __init__(self, strategy):
         self.contents = set()
+        self.strategy = strategy
 
     def __len__(self):
         return len(self.contents)
 
     def track(self, x):
-        k = object_to_tracking_key(x)
+        k = object_to_tracking_key(self.strategy.to_basic(x))
         if k in self.contents:
             return 2
         else:

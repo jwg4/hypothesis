@@ -77,9 +77,6 @@ class StreamTemplate(object):
             max(self.changed, max(i + 1 for i, _ in updates))
         )
 
-    def __trackas__(self):
-        return (u'StreamTemplate', self.seed, list(self.stream[:self.changed]))
-
 
 class StreamStrategy(SearchStrategy):
 

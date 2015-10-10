@@ -24,7 +24,6 @@ import hypothesis.strategies as s
 from hypothesis import find, given, example, Settings
 from hypothesis.errors import InvalidArgument
 from hypothesis.control import BuildContext
-from hypothesis.internal.tracker import Tracker
 from hypothesis.searchstrategy.morphers import Morpher, MorpherStrategy
 
 morphers = MorpherStrategy()
@@ -125,21 +124,6 @@ def test_a_morpher_accumulates_strategies():
     m.become(s.text())
     m.clear()
     assert len(m.data) == 2
-
-
-def test_can_track_morphers():
-    t = Tracker()
-    assert t.track(Morpher(0, 0)) == 1
-    assert t.track(Morpher(0, 0)) == 2
-
-    m1 = Morpher(0, 1)
-    m2 = Morpher(0, 1)
-
-    m1.become(s.lists(s.integers()))
-    m2.become(s.lists(s.integers()))
-
-    assert t.track(m1) == 1
-    assert t.track(m2) == 2
 
 
 def test_cannot_install_into_morpher_twice():

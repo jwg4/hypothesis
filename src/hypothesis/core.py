@@ -274,7 +274,7 @@ def best_satisfying_template(
 
     """
     if tracker is None:
-        tracker = Tracker()
+        tracker = Tracker(search_strategy)
     start_time = time.time()
 
     successful_shrinks = -1
@@ -645,7 +645,7 @@ def find(specifier, condition, settings=None, random=None, storage=None):
         return success
 
     template_condition.__name__ = condition.__name__
-    tracker = Tracker()
+    tracker = Tracker(search)
 
     try:
         template = best_satisfying_template(

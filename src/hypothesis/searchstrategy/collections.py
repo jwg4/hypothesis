@@ -516,12 +516,6 @@ class UniqueListTemplate(object):
         else:
             return hash(self.values)
 
-    def __trackas__(self):
-        if self.created_as_seed:
-            return (False, self.parameter_seed, self.template_seed)
-        else:
-            return (True, self.values)
-
 
 class UniqueListStrategy(SearchStrategy):
 

@@ -133,7 +133,7 @@ def via_database(spec, strat, template):
 
 
 def minimal_element(strategy, random):
-    tracker = Tracker()
+    tracker = Tracker(strategy)
     element = some_template(strategy, random)
     while True:
         for new_element in strategy.full_simplify(random, element):

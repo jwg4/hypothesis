@@ -251,14 +251,6 @@ class StateMachineRunner(object):
             self.n_steps,
         ))
 
-    def __trackas__(self):
-        return (
-            StateMachineRunner,
-            self.parameter_seed, self.template_seed,
-            self.n_steps,
-            [data[1] for data in self.record],
-        )
-
     def __repr__(self):
         return (
             u'StateMachineRunner(%d/%d steps)' % (
