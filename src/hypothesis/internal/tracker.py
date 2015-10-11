@@ -17,10 +17,8 @@
 from __future__ import division, print_function, absolute_import
 
 import hashlib
-import collections
 
 import marshal
-from hypothesis.internal.compat import text_type, binary_type
 
 
 def object_to_tracking_key(o):
