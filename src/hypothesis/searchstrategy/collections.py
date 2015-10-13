@@ -778,10 +778,3 @@ class FixedKeysDictStrategy(MappedSearchStrategy):
 
     def pack(self, value):
         return self.dict_type(zip(self.keys, value))
-
-
-Settings.define_setting(
-    u'average_list_length',
-    default=25.0,
-    description=u'Average length of lists to use'
-)
