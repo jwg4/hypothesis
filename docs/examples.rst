@@ -126,11 +126,11 @@ this immediately fails with the following example:
 
 
 The reason for this is that because False is not a prefix of (True, True) nor vice
-versa, sorting things the first two nodes are equal because they have equal labels.
+versa, sorting thinks the first two nodes are equal because they have equal labels.
 This makes the whole order non-transitive and produces basically nonsense results.
 
 But this is pretty unsatisfying. It only works because they have the same label. Perhaps
-we actually wanted our labels to be unique. Lets change the test to do that.
+we actually wanted our labels to be unique. Let's change the test to do that.
 
 .. code:: python
 
