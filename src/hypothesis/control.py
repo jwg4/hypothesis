@@ -120,7 +120,9 @@ def event(value):
     runs with each event will be reported at the end if you run Hypothesis in
     statistics reporting mode.
 
-    Events should be strings or convertible to them.
+    Events can be any hashable type which is convertible to a string.
+    Two events will be considered the same if they are the same when converted
+    to a string with `str`.
 
     """
 
