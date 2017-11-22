@@ -20,7 +20,7 @@ With the ``repr`` of each keyword argument being printed.
 
 Sometimes this isn't enough, either because you have values with a ``repr`` that
 isn't very descriptive or because you need to see the output of some
-intermediate steps of your test. That's where the ``note`` function comes in:
+intermediate steps of your test. That's where the :func:`note <hypothesis.note>` function comes in:
 
 .. doctest::
 
