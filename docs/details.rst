@@ -409,7 +409,7 @@ the following executor runs all its code twice:
             f()
             return f()
 
-Note: The functions you use in map, etc. will run *inside* the executor. i.e.
+Note: The functions you use in `map`, etc. will run *inside* the executor. i.e.
 they will not be called until you invoke the function passed to ``execute_example``.
 
 An executor must be able to handle being passed a function which returns None,
