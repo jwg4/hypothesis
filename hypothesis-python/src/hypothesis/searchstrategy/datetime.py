@@ -80,6 +80,11 @@ class DatetimeStrategy(SearchStrategy):
         data.mark_invalid()
 
 
+NASTY_DATES = [
+    dt.date(1900, 2, 29)
+]
+
+
 class DateStrategy(SearchStrategy):
 
     def __init__(self, min_value, max_value):
@@ -90,9 +95,18 @@ class DateStrategy(SearchStrategy):
         self.days_apart = (max_value - min_value).days
         self.center = (dt.date(2000, 1, 1) - min_value).days
 
+        weights = [
+            0.2 * len(NASTY_DATES)
+        ] + [0.8] * len(NASTY_DATES)
+        self.sampler = utils.Sampler(weights)
+
     def do_draw(self, data):
-        return self.min_value + dt.timedelta(days=utils.centered_integer_range(
-            data, 0, self.days_apart, center=self.center))
+        i = self.sampler.sample(data)
+        if i == 0:
+            return self.min_value + dt.timedelta(days=utils.centered_integer_range(
+                data, 0, self.days_apart, center=self.center))
+        else:
+            return NASTY_DATES[i-1]
 
 
 class TimedeltaStrategy(SearchStrategy):
