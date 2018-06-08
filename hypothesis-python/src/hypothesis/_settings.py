@@ -595,8 +595,8 @@ class HealthCheck(Enum):
 
     random_module = 4
     """Deprecated and no longer does anything. It used to check for whether
-    your tests used the global random module. Now @given tests automatically
-    seed random so this is no longer an error."""
+    your tests used the global random module. Now :func:`~hypothesis.@given` tests
+    automatically seed random so this is no longer an error."""
 
     return_value = 5
     """Checks if your tests return a non-None value (which will be ignored and
@@ -609,7 +609,8 @@ class HealthCheck(Enum):
     """Checks if the natural example to shrink towards is very large."""
 
     not_a_test_method = 8
-    """Checks if @given has been applied to a method of unittest.TestCase."""
+    """Checks if :func:`~hypothesis.@given` has been applied to a method of
+    unittest.TestCase."""
 
 
 @unique
