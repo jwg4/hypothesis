@@ -81,13 +81,21 @@ class DatetimeStrategy(SearchStrategy):
 
 
 NASTY_DATES = [
+    # Some software doesn't know that 1900 wasn't a leap year
     dt.date(1900, 2, 28),
     dt.date(1900, 3, 1),
+    # These two years are leap years
     dt.date(1800, 2, 29),
     dt.date(2000, 2, 29),
+    # Dates towards the extremes of datetime.date range
     dt.date(9999, 1, 1),
-    dt.date(9999, 31, 12),
+    dt.date(9999, 12, 31),
     dt.date(1, 1, 1),
+    dt.date(1, 12, 31),
+    # These dates did not take place in England.
+    # datetime.date uses the proleptic Gregorian calendar
+    dt.date(1752, 9, 3),
+    dt.date(1752, 9, 13),
 ]
 
 
