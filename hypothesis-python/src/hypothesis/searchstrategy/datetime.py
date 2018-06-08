@@ -85,6 +85,9 @@ NASTY_DATES = [
     dt.date(1900, 3, 1),
     dt.date(1800, 2, 29),
     dt.date(2000, 2, 29),
+    dt.date(9999, 1, 1),
+    dt.date(9999, 31, 12),
+    dt.date(1, 1, 1),
 ]
 
 
