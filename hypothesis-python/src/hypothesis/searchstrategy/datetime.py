@@ -125,10 +125,13 @@ class DateStrategy(SearchStrategy):
     def do_draw(self, data):
         i = self.sampler.sample(data)
         if i == 0:
-            return self.min_value + dt.timedelta(days=utils.centered_integer_range(
-                data, 0, self.days_apart, center=self.center))
+            return self.min_value + dt.timedelta(
+                days=utils.centered_integer_range(
+                    data, 0, self.days_apart, center=self.center
+                )
+            )
         else:
-            return NASTY_DATES[i-1]
+            return NASTY_DATES[i - 1]
 
 
 class TimedeltaStrategy(SearchStrategy):
