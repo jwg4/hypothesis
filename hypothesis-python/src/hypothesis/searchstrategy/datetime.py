@@ -81,7 +81,10 @@ class DatetimeStrategy(SearchStrategy):
 
 
 NASTY_DATES = [
-    dt.date(1900, 2, 29)
+    dt.date(1900, 2, 28),
+    dt.date(1900, 3, 1),
+    dt.date(1800, 2, 29),
+    dt.date(2000, 2, 29),
 ]
 
 
