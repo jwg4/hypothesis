@@ -245,6 +245,33 @@ def times(
     return TimeStrategy(min_value, max_value, timezones)
 
 
+NASTY_DATES = [
+    # Some software doesn't know that 1900 wasn't a leap year
+    dt.date(1900, 2, 28),
+    dt.date(1900, 3, 1),
+    # These years are leap years
+    dt.date(1904, 2, 29),
+    dt.date(1200, 2, 29),
+    dt.date(1600, 2, 29),
+    dt.date(2000, 2, 29),
+    # Dates towards the extremes of datetime.date range
+    dt.date(9999, 1, 1),
+    dt.date(9999, 12, 31),
+    dt.date(1, 1, 1),
+    # These dates did not take place in England.
+    # datetime.date uses the proleptic Gregorian calendar
+    dt.date(1752, 9, 3),
+    dt.date(1752, 9, 13),
+    # Unix epoch
+    dt.date(1970, 1, 1),
+    dt.date(1969, 12, 31),
+    # Microsoft epoch
+    dt.date(1900, 1, 1),
+    dt.date(1899, 12, 31),
+    dt.date(1899, 12, 30),
+]
+
+
 class DateStrategy(SearchStrategy):
     def __init__(self, min_value, max_value):
         assert isinstance(min_value, dt.date)
@@ -253,10 +280,21 @@ class DateStrategy(SearchStrategy):
         self.min_value = min_value
         self.max_value = max_value
 
+        self.nasty_dates = [
+            d for d in NASTY_DATES if self.min_value <= f <= self.max_value
+        ]
+        weights = [0.6 * len(self.nasty_dates)] + [0.4] * len(self.nasty_dates)
+        self.sampler = utils.Sampler(weights)
+
     def do_draw(self, data):
-        return dt.date(
-            **draw_capped_multipart(data, self.min_value, self.max_value, DATENAMES)
-        )
+        i = self.sampler.sample(data)
+        if i == 0:
+            result = dt.date(
+                **draw_capped_multipart(data, self.min_value, self.max_value, DATENAMES)
+            )
+        else:
+            result = self.nasty_dates[i - 1]
+        return result
 
 
 @defines_strategy_with_reusable_values
